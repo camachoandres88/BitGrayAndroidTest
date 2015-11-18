@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">BitGrayTest</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+
+    <string name="user">Usuarios</string>
+    <string name="photos">Fotos</string>
+    <string name="album">Album</string>
+
+    <string name="developed_by">Desarrollado por Andres Camacho</string>
+    <string name="developer_email">camachoandres88@gmail.com</string>
+    <string name="no_internet_connection">No hay conexion a internet.</string>
+    <string name="loading_user">Cargando Usuario...</string>
+    <string name="username">Usuario</string>
+    <string name="names">Nombres</string>
+    <string name="email">Correo</string>
+    <string name="phone_number">Teléfono</string>
+    <string name="company">Compañia</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
