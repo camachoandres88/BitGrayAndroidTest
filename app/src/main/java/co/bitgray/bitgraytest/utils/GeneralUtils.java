@@ -22,11 +22,11 @@ public class GeneralUtils {
         return fecha;
     }
 
-    public long dateToMilliseconds(Date date) throws ParseException {
+    public static long dateToMilliseconds(Date date) throws ParseException {
         return date.getTime();
     }
 
-    public long dateToMillisecondsRemoveTime(Date date) throws ParseException {
+    public static long dateToMillisecondsRemoveTime(Date date) throws ParseException {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         cal.set(Calendar.HOUR_OF_DAY, 0);
@@ -36,7 +36,7 @@ public class GeneralUtils {
         return cal.getTimeInMillis();
     }
 
-    public Date millisecondsToDate(long milliseconds) throws ParseException {
+    public  static Date millisecondsToDate(long milliseconds) throws ParseException {
         Date date = new Date();
         date.setTime(milliseconds);
         return date;

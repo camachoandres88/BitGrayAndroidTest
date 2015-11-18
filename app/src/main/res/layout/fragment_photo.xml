@@ -3,8 +3,17 @@
     android:layout_height="match_parent"
     tools:context="co.bitgray.bitgraytest.fragments.PhotoFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView android:layout_width="match_parent" android:layout_height="match_parent"
-        android:text="Photo" />
+
+    <Button
+        android:id="@+id/btnCameraPhoto"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:text="@string/take_photo"/>
+
+    <ImageView
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageThumbnailPhoto"/>
+
 
 </FrameLayout>

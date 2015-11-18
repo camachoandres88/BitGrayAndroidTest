@@ -1,12 +1,17 @@
 package co.bitgray.bitgraytest.fragments;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
 
 import co.bitgray.bitgraytest.R;
 
@@ -27,6 +32,11 @@ public class PhotoFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    static final int REQUEST_IMAGE_CAPTURE = 1;
+
+    Button btnCameraPhoto;
+    ImageView imageThumbnailPhoto;
 
     private OnFragmentInteractionListener mListener;
 
@@ -68,6 +78,21 @@ public class PhotoFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_photo, container, false);
     }
 
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        btnCameraPhoto= (Button)getActivity().findViewById(R.id.btnCameraPhoto);
+        imageThumbnailPhoto = (ImageView)getActivity().findViewById(R.id.imageThumbnailPhoto);
+
+        btnCameraPhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dispatchTakePictureIntent();
+            }
+        });
+    }
+
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
@@ -92,6 +117,14 @@ public class PhotoFragment extends Fragment {
         mListener = null;
     }
 
+    private void dispatchTakePictureIntent() {
+
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        }
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -105,6 +138,15 @@ public class PhotoFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         public void onFragmentInteraction(Uri uri);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == getActivity().RESULT_OK) {
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            imageThumbnailPhoto.setImageBitmap(imageBitmap);
+        }
     }
 
 }
