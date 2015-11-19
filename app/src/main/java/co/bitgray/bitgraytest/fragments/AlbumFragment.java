@@ -1,14 +1,23 @@
 package co.bitgray.bitgraytest.fragments;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.List;
+
 import co.bitgray.bitgraytest.R;
+import co.bitgray.bitgraytest.adapters.AlbumAdapter;
+import co.bitgray.bitgraytest.models.Album;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -28,17 +37,13 @@ public class AlbumFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    private RecyclerView reciclerViewAlbum;
+
+    private ProgressDialog loading;
+    private  AlbumAdapter albumAdapter;
+
     private OnFragmentInteractionListener mListener;
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment AlbumFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static AlbumFragment newInstance(String param1, String param2) {
         AlbumFragment fragment = new AlbumFragment();
         Bundle args = new Bundle();
@@ -49,7 +54,6 @@ public class AlbumFragment extends Fragment {
     }
 
     public AlbumFragment() {
-        // Required empty public constructor
     }
 
     @Override
@@ -62,13 +66,29 @@ public class AlbumFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+
+        reciclerViewAlbum = (RecyclerView) getActivity().findViewById(R.id.reciclerViewAlbum);
+        reciclerViewAlbum.setHasFixedSize(true);
+        reciclerViewAlbum.setLayoutManager(new LinearLayoutManager(getActivity()));
+        reciclerViewAlbum.setItemAnimator(new DefaultItemAnimator());
+        reciclerViewAlbum.stopScroll();
+        loading =  new ProgressDialog(getActivity(),
+                R.style.Theme_AppCompat_Dialog);
+        loading.setIndeterminate(true);
+        loading.setCanceledOnTouchOutside(false);
+        loading.setCancelable(false);
+
+        new AlbumTask().execute();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_album, container, false);
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -92,19 +112,33 @@ public class AlbumFragment extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         public void onFragmentInteraction(Uri uri);
+    }
+
+    private class AlbumTask extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            loading.setMessage(getResources().getString(R.string.loading));
+            loading.show();
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            Album album = new Album(getActivity());
+            List<Album> allDatedAlbums = album.getAllAlbum();
+            albumAdapter= new AlbumAdapter(getActivity(),allDatedAlbums,R.layout.item_album);
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            reciclerViewAlbum.setAdapter(albumAdapter);
+            loading.hide();
+        }
     }
 
 }

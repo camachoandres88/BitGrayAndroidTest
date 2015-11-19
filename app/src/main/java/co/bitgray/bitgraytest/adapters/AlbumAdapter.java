@@ -19,6 +19,7 @@ import java.util.List;
 
 import co.bitgray.bitgraytest.R;
 import co.bitgray.bitgraytest.models.Album;
+import co.bitgray.bitgraytest.ui.ExtendedGridView;
 import co.bitgray.bitgraytest.utils.GeneralUtils;
 
 /**
@@ -54,6 +55,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ViewHolder> 
         try {
             holder.albumNameItem.setText(GeneralUtils.dateToString(GeneralUtils.millisecondsToDate(album.getDate())));
             holder.albumGridViewItem.setAdapter(new GridAlbumAdapter(parentActivity, R.layout.item_grid_album, album.getPhotos()));
+            holder.albumGridViewItem.setExpanded(true);
 
         } catch (ParseException e) {
             e.printStackTrace();
@@ -70,12 +72,12 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ViewHolder> 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
         public TextView albumNameItem;
-        public GridView albumGridViewItem;
+        public ExtendedGridView albumGridViewItem;
 
         public ViewHolder(View itemView) {
             super(itemView);
             albumNameItem = (TextView) itemView.findViewById(R.id.albumNameItem);
-            albumGridViewItem = (GridView) itemView.findViewById(R.id.albumGridViewItem);
+            albumGridViewItem = (ExtendedGridView) itemView.findViewById(R.id.albumGridViewItem);
         }
     }
 }

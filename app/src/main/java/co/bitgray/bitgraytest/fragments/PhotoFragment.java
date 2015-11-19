@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Location;
+import android.location.LocationListener;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -16,7 +18,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
+
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,11 +33,14 @@ import java.util.Date;
 import co.bitgray.bitgraytest.R;
 import co.bitgray.bitgraytest.utils.GeneralUtils;
 
-public class PhotoFragment extends Fragment {
+public class PhotoFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private String mParam1;
     private String mParam2;
+    private Location lastLocation;
+
+    private GoogleApiClient googleApiClient;
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
 
@@ -46,6 +56,8 @@ public class PhotoFragment extends Fragment {
     TextInputLayout inputLayoutTittlePhoto;
     TextInputLayout inputLayoutLatitudePhoto;
     TextInputLayout inputLayoutLongitudePhoto;
+
+    LinearLayout containerPhotoLocation;
 
     private OnFragmentInteractionListener mListener;
 
@@ -68,7 +80,14 @@ public class PhotoFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+        googleApiClient = new GoogleApiClient.Builder(getActivity())
+                .addApi(LocationServices.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -76,6 +95,19 @@ public class PhotoFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_photo, container, false);
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        googleApiClient.connect();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (googleApiClient.isConnected()) {
+            googleApiClient.disconnect();
+        }
+    }
 
     @Override
     public void onResume() {
@@ -89,6 +121,8 @@ public class PhotoFragment extends Fragment {
         inputLayoutTittlePhoto= (TextInputLayout) getActivity().findViewById(R.id.inputLayoutTittlePhoto);
         inputLayoutLatitudePhoto= (TextInputLayout) getActivity().findViewById(R.id.inputLayoutLatitudePhoto);
         inputLayoutLongitudePhoto= (TextInputLayout) getActivity().findViewById(R.id.inputLayoutLongitudePhoto);
+        containerPhotoLocation= (LinearLayout) getActivity().findViewById(R.id.containerPhotoLocation);
+
         btnCameraPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -102,6 +136,8 @@ public class PhotoFragment extends Fragment {
             }
         });
     }
+
+
 
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
@@ -179,6 +215,11 @@ public class PhotoFragment extends Fragment {
 
         Bitmap bitmap = BitmapFactory.decodeFile(currentPhotoPath, bmOptions);
 
+        if(lastLocation!=null){
+            latitudePhoto.setText(String.valueOf(lastLocation.getLatitude()));
+            longitudePhoto.setText(String.valueOf(lastLocation.getLongitude()));
+        }
+
         imageThumbnailPhoto.setImageBitmap(bitmap);
         latitudePhoto.setVisibility(View.VISIBLE);
         longitudePhoto.setVisibility(View.VISIBLE);
@@ -188,6 +229,7 @@ public class PhotoFragment extends Fragment {
         inputLayoutLongitudePhoto.setVisibility(View.VISIBLE);
         inputLayoutLatitudePhoto.setVisibility(View.VISIBLE);
         btnSavePhoto.setVisibility(View.VISIBLE);
+        containerPhotoLocation.setVisibility(View.VISIBLE);
     }
 
     public void savePhotoInAlbum(){
@@ -197,7 +239,13 @@ public class PhotoFragment extends Fragment {
                 photo.setDate(GeneralUtils.dateToMillisecondsRemoveTime(new Date()));
                 photo.setResource(currentPhotoPath);
                 photo.setTitle(tittlePhoto.getText().toString());
+                photo.setResourceData(GeneralUtils.getBytes(GeneralUtils.getThumbnail(currentPhotoPath)));
+
+
+
                 photo.save();
+
+
 
                 imageThumbnailPhoto.setImageResource(R.drawable.empty_image);
                 latitudePhoto.setVisibility(View.GONE);
@@ -208,16 +256,54 @@ public class PhotoFragment extends Fragment {
                 inputLayoutLongitudePhoto.setVisibility(View.GONE);
                 inputLayoutLatitudePhoto.setVisibility(View.GONE);
                 btnSavePhoto.setVisibility(View.GONE);
+                containerPhotoLocation.setVisibility(View.GONE);
                 currentPhotoPath = null;
-
+                GeneralUtils.hideSoftKeyboard(getActivity());
                 Toast.makeText(getActivity(),getActivity().getResources().getString(R.string.photo_saved),Toast.LENGTH_LONG).show();
 
             } catch (ParseException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }else{
             Toast.makeText(getActivity(),getActivity().getResources().getString(R.string.photo_validation),Toast.LENGTH_LONG).show();
         }
+
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        lastLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        googleApiClient.connect();
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
 
     }
 

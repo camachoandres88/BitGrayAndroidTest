@@ -23,6 +23,7 @@ public class DBPhoto {
     public static final String C_RESOURCE = "resource";
     public static final String C_LATITUDE = "latitude";
     public static final String C_LONGITUDE = "longitude";
+    public static final String C_RESOURCE_DATA = "resourceData";
     public static final String C_ID_ALBUM = "idAlbum";
 
     public static final int C_ID_INDEX = 0;
@@ -30,7 +31,8 @@ public class DBPhoto {
     public static final int C_RESOURCE_INDEX = 2;
     public static final int C_LATITUDE_INDEX = 3;
     public static final int C_LONGITUDE_INDEX = 4;
-    public static final int C_ID_ALBUM_INDEX = 5;
+    public static final int C_RESOURCE_DATA_INDEX = 5;
+    public static final int C_ID_ALBUM_INDEX = 6;
 
     private DBHelper dbHelper;
     private SQLiteDatabase dataBase;
@@ -46,6 +48,7 @@ public class DBPhoto {
                 + C_RESOURCE + " TEXT ,"
                 + C_LATITUDE + " REAL ,"
                 + C_LONGITUDE + " REAL ,"
+                + C_RESOURCE_DATA + " BLOB ,"
                 + C_ID_ALBUM + " INTEGER )";
         return result;
     }
@@ -72,6 +75,7 @@ public class DBPhoto {
             values.put(C_RESOURCE, item.getResource());
             values.put(C_LATITUDE, item.getLatitude());
             values.put(C_LONGITUDE, item.getLongitude());
+            values.put(C_RESOURCE_DATA, item.getResourceData());
             values.put(C_ID_ALBUM, item.getIdAlbum());
             insertedId= dataBase.insert(TABLE, null, values);
 
@@ -128,5 +132,9 @@ public class DBPhoto {
 
     public static int getcResourceIndex() {
         return C_RESOURCE_INDEX;
+    }
+
+    public static int getcResourceDataIndex() {
+        return C_RESOURCE_DATA_INDEX;
     }
 }

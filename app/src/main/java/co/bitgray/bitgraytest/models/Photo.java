@@ -2,8 +2,15 @@ package co.bitgray.bitgraytest.models;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
 import java.util.List;
+
 import co.bitgray.bitgraytest.db.DBPhoto;
+import co.bitgray.bitgraytest.utils.GeneralUtils;
 
 /**
  * Created by andrescamacho on 18/11/15.
@@ -24,6 +31,8 @@ public class Photo {
 
     private long date;
 
+    private byte[] resourceData;
+
     private Context context;
 
     public Photo(Context context) {
@@ -31,13 +40,18 @@ public class Photo {
     }
 
     public Photo(Context context, Cursor cursor) {
-        this.id = cursor.getLong(DBPhoto.getcIdIndex());
-        this.title = cursor.getString(DBPhoto.getcTitleIndex());
-        this.resource = cursor.getString(DBPhoto.getcResourceIndex());
-        this.latitude = cursor.getFloat(DBPhoto.getcLatitudeIndex());
-        this.longitude = cursor.getFloat(DBPhoto.getcLongitudeIndex());
-        this.idAlbum = cursor.getLong(DBPhoto.getcIdAlbumIndex());
-        this.context = context;
+        try {
+            this.id = cursor.getLong(DBPhoto.getcIdIndex());
+            this.title = cursor.getString(DBPhoto.getcTitleIndex());
+            this.resource = cursor.getString(DBPhoto.getcResourceIndex());
+            this.latitude = cursor.getFloat(DBPhoto.getcLatitudeIndex());
+            this.longitude = cursor.getFloat(DBPhoto.getcLongitudeIndex());
+            this.idAlbum = cursor.getLong(DBPhoto.getcIdAlbumIndex());
+            this.resourceData = cursor.getBlob(DBPhoto.getcResourceDataIndex());
+            this.context = context;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public List<Photo> getPhotosByAlbum(long idAlbum) {
@@ -59,6 +73,8 @@ public class Photo {
         DBPhoto dbPhoto = new DBPhoto(context);
         this.id = dbPhoto.insert(this);
     }
+
+
 
     public long getId() {
         return id;
@@ -118,5 +134,13 @@ public class Photo {
 
     public void setContext(Context context) {
         this.context = context;
+    }
+
+    public byte[] getResourceData() {
+        return resourceData;
+    }
+
+    public void setResourceData(byte[] resourceData) {
+        this.resourceData = resourceData;
     }
 }

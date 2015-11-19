@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.util.Range;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -109,13 +108,12 @@ public class UserFragment extends Fragment {
         loading.show();
 
         if (NetworkUtils.haveNetworkConnection(getActivity())) {
-            Random random = new Random();
-            int number = random.nextInt((10 - 1) + 1) + 1;
 
+            int randomNumber = getRandomNumber();
 
             RestUser restUser = RestApiHelper.createService(RestUser.class, ConstantUtils.URL_MAIN_REST, getActivity());
 
-            restUser.getUser(number, new Callback<User>() {
+            restUser.getUser(randomNumber, new Callback<User>() {
                 @Override
                 public void success(User user, Response response) {
                     userNameEdt.setText(user.getUsername());
@@ -135,6 +133,17 @@ public class UserFragment extends Fragment {
             });
         }else{
             Toast.makeText(getActivity(),R.string.no_internet_connection,Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private int getRandomNumber(){
+        Random random = new Random();
+        int number = random.nextInt((10 - 1) + 1) + 1;
+
+        if(number>0 && number <= 10){
+            return number;
+        }else{
+            return getRandomNumber();
         }
     }
 

@@ -2,7 +2,6 @@ package co.bitgray.bitgraytest.adapters;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +14,7 @@ import java.util.List;
 
 import co.bitgray.bitgraytest.R;
 import co.bitgray.bitgraytest.models.Photo;
+import co.bitgray.bitgraytest.utils.GeneralUtils;
 
 /**
  * Created by andrescamacho on 18/11/15.
@@ -40,8 +40,8 @@ public class GridAlbumAdapter extends ArrayAdapter {
             LayoutInflater inflater = ((Activity) context).getLayoutInflater();
             row = inflater.inflate(layoutResourceId, parent, false);
             holder = new ViewHolder();
-            holder.imageTitle = (TextView) row.findViewById(R.id.text);
-            holder.image = (ImageView) row.findViewById(R.id.image);
+            holder.imageTitle = (TextView) row.findViewById(R.id.textImageItem);
+            holder.image = (ImageView) row.findViewById(R.id.imageItem);
             row.setTag(holder);
         } else {
             holder = (ViewHolder) row.getTag();
@@ -49,7 +49,7 @@ public class GridAlbumAdapter extends ArrayAdapter {
 
         Photo item = data.get(position);
         holder.imageTitle.setText(item.getTitle());
-        //holder.image.setImageBitmap(imageBitmap);
+        holder.image.setImageBitmap(GeneralUtils.getImage(item.getResourceData()));
         return row;
     }
 
