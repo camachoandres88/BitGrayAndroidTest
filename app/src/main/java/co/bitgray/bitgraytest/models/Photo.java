@@ -50,8 +50,8 @@ public class Photo {
         album = album.getAlbumByDate(this.date);
 
         if (album == null) {
-            album.setDate(this.date);
-            album.setContext(context);
+            album = new Album(context);
+            album.setDate(this.getDate());
             album.save();
         }
         this.setIdAlbum(album.getId());

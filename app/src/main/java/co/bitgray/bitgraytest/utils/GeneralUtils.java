@@ -1,5 +1,10 @@
 package co.bitgray.bitgraytest.utils;
 
+import android.content.res.Resources;
+import android.os.Environment;
+
+import java.io.File;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -40,6 +45,17 @@ public class GeneralUtils {
         Date date = new Date();
         date.setTime(milliseconds);
         return date;
+    }
+
+    public static File createImageFile(String directory) throws IOException {
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = Environment.getExternalStoragePublicDirectory(directory);
+        if (!storageDir.exists()) {
+            storageDir.mkdirs();
+        }
+        File image = File.createTempFile(imageFileName,".jpg",storageDir);
+        return image;
     }
 
 }
