@@ -240,12 +240,7 @@ public class PhotoFragment extends Fragment implements GoogleApiClient.Connectio
                 photo.setResource(currentPhotoPath);
                 photo.setTitle(tittlePhoto.getText().toString());
                 photo.setResourceData(GeneralUtils.getBytes(GeneralUtils.getThumbnail(currentPhotoPath)));
-
-
-
                 photo.save();
-
-
 
                 imageThumbnailPhoto.setImageResource(R.drawable.empty_image);
                 latitudePhoto.setVisibility(View.GONE);
